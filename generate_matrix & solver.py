@@ -191,38 +191,8 @@ for i in internal_nodesD:
 
 # ----------------------------------------Code to solve the matrices---------------------------------------#
 
-T_init = np.zeros(n)
-T_1d = np.copy(T_init)
-
 T_1d = spsolve(A, Su)
 
-"""
-T_corner = []
-heat_in = []
-heat_out = []
-fin_heat = []
-
-iter = 0
-n_iterations = 4000
-iter_array = range(n_iterations)
-
-while iter < n_iterations:
-
-    for i in range(np.shape(A)[0]):
-        GS_num = 0
-        for j in range(np.shape(A)[1]):
-            if A[i,j] != 0 and i!=j:
-                GS_num += -A[i,j]*T_1d[j]
-                
-        T_1d[i] = (GS_num + Su[i]) / A[i,i]
-
-    iter +=1
-    
-    heat_in.append ( dx/dx*k* np.sum(T_1d[left_fixed] - T_1d[left_fixed+1]) )
-    heat_out.append ( h*dx * np.sum(T_1d[total_convection] - T_infin) )
-    fin_heat.append ( 2*h*dx * np.sum(T_1d[fin_convection] - T_infin) )
-    T_corner.append(T_1d[c3])
-"""
 T_2d = reshape2(T_1d, np.nan)
 
 # Code to plot the temperature profile
@@ -236,68 +206,13 @@ plt.ylabel("mm")
 cbar = plt.colorbar()
 plt.show()
 
-
 # Code to output the total heat transfer
-heat_in_final = heat_in[-1]
-heat_out_final = heat_out[-1]   
+heat_in = ( dx/dx*k* np.sum(T_1d[left_fixed] - T_1d[left_fixed+1]) )
+heat_out = ( h*dx * np.sum(T_1d[total_convection] - T_infin) )
+fin_heat = ( 2*h*dx * np.sum(T_1d[fin_convection] - T_infin) )
+T_corner = T_1d[c3]
 
-print(fin_heat[-1])
-print(T_corner[-1])
-
-# Plots to check convergence
-plt.plot(iter_array, fin_heat)
-plt.title("Heat from Fin")
-plt.xlabel("No. of Iterations")
-plt.ylabel("Heat (Watts)")
-plt.show()
-
-plt.plot(iter_array, T_corner)
-plt.title("T corner")
-plt.xlabel("No. of Iterations")
-plt.ylabel("Celcius")
-plt.show()
-
-
-# ---------------------Code to plot the geomtery---------------------------------------
-"""
-#convert from 1D indexes to the 2D indexes for graphing
-top_x, top_y = where2(top_adiabatic)
-right_fin_x, right_fin_y = where2(right_convec_fin)
-bottom_fin_x, bottom_fin_y = where2(bottom_convec)
-right_flat_x, right_flat_y = where2(right_convec_flat)
-total_convec_x, total_convec_y = where2(total_convection)
-bottom_flat_x, bottom_flat_y = where2(bottom_adiabatic)
-left_x, left_y = where2(left_fixed)
-internalA_x, internalA_y = where2(internal_nodesA)
-internalB_x, internalB_y = where2(internal_nodesB)
-internalD_x, internalD_y = where2(internal_nodesD)
-
-# Drawing the volume to verify
-#plt.scatter(test_xy[1], test_xy[0], color = 'k')
-test_xy = (np.where(index_2d != 0.5))
-
-plt.scatter(internalA_x, ny - internalA_y, color = "silver")
-plt.scatter(internalB_x, ny - internalB_y, color = "silver")
-plt.scatter(internalD_x, ny - internalD_y, color = "k")
-plt.scatter(top_x, ny- top_y, color = "b")
-#plt.scatter(right_fin_x, ny - right_fin_y, color = "m")
-#plt.scatter(bottom_fin_x, ny - bottom_fin_y, color = "m")
-#plt.scatter(right_flat_x, ny - right_flat_y, color = "m")
-plt.scatter(bottom_flat_x, ny - bottom_flat_y, color = "b")
-plt.scatter(left_x, ny - left_y, color = "r")
-#plt.scatter(convert(c1)[1], ny - convert(c1)[0], color = "g")
-#plt.scatter(convert(c2)[1], ny - convert(c2)[0], color = "g")
-#plt.scatter(convert(c3)[1], ny - convert(c3)[0], color = "g")
-#plt.scatter(convert(c4)[1], ny - convert(c4)[0], color = "g")
-#plt.scatter(convert(c5)[1], ny - convert(c5)[0], color = "g")
-plt.scatter(total_convec_x, ny - total_convec_y, color = "m")
-plt.show()
-
-"""
-
-#plt.plot(iter_array, heat_in)
-#plt.title("Heat IN")
-#plt.show()
-#plt.plot(iter_array, heat_out)
-#plt.title("Heat out")
-#plt.show()
+print(heat_in)
+print(heat_out)
+print(fin_heat)
+print(T_corner)
